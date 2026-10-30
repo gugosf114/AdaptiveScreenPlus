@@ -10,11 +10,15 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses >/dev/null 2>&1 || true
       - name: Build debug APK
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace --no-daemon
-      - name: Show APK path
+      - name: List APKs
         if: always()
         run: find app/build/outputs -name "*.apk" -print 2>/dev/null || true
       - uses: actions/upload-artifact@v4
