@@ -1,0 +1,25 @@
+name: build-apk
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace --no-daemon
+      - name: Show APK path
+        if: always()
+        run: find app/build/outputs -name "*.apk" -print 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adaptivescreen-debug-apk
+          path: app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
